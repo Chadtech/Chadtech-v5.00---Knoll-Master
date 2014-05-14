@@ -43,18 +43,21 @@ def blitter(what):
 	placeeX,placeeY = placee.get_size()
 	screen.blit(placee,[what.xPos-(placeeX/2),what.yPos-(placeeY/2)])
 
+################################
+###### Load all the items ######
+################################
 os.chdir(os.path.abspath('items'))
-
 itemMapper = {}
-
 for item in os.listdir(os.getcwd()):
 	xSize, ySize = pygame.image.load(item).get_size()
 	itemMapper[item[:len(item)-4]] = itemType(pygame.transform.scale(pygame.image.load(item),(xSize*2,ySize*2)).convert(),xSize*2,ySize*2)
 	itemMapper[item[:len(item)-4]].image.set_colorkey((255,255,255,255))
+os.chdir(os.path.dirname(os.getcwd()))
+
 
 firstDrill = itemInstance(itemMapper['drill0'],400,400,45)
 
-os.chdir(os.path.dirname(os.getcwd()))
+
 
 title=pygame.image.load('chadtechknollmastertitle.png').convert()
 title.set_colorkey((255,255,255,255))
