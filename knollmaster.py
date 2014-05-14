@@ -15,6 +15,8 @@ pygame.display.set_caption("Chadtech v5.00 : Knoll Master",)
 
 knollTable = pygame.image.load('tableB.png').convert()
 
+os.chdir(os.path.abspath('items'))
+
 drill0=pygame.image.load('drill0.png').convert()
 drill0.set_colorkey((255,255,255,255))
 
@@ -35,6 +37,8 @@ glasses0.set_colorkey((255,255,255,255))
 
 title=pygame.image.load('chadtechnknollmastertitle.png').convert()
 title.set_colorkey((255,255,255,255))
+
+os.chdir(os.path.dirname(os.getcwd()))
 
 mainLoop = True
 quit = False
