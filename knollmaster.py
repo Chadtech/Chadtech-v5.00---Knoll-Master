@@ -55,7 +55,7 @@ for item in os.listdir(os.getcwd()):
 os.chdir(os.path.dirname(os.getcwd()))
 
 
-firstDrill = itemInstance(itemMapper['drill0'],400,400,45)
+#firstDrill = itemInstance(itemMapper['drill0'],400,400,45)
 
 
 
@@ -64,8 +64,16 @@ title.set_colorkey((255,255,255,255))
 
 mainLoop = True
 quit = False
+mouDown = False
+anglin = False
+
+itemSelected = ''
 
 angle = 0
+
+itemsOnSurface=[]
+
+itemsOnSurface.append(itemInstance(itemMapper['drill0'],400,400,45))
 
 while mainLoop and not quit:
 
@@ -73,16 +81,44 @@ while mainLoop and not quit:
 	screen.blit(pygame.transform.scale(title,(564,124)),[225,5])
 	angle+=1
 
-	firstDrill.angle+=1
-
-	blitter(firstDrill)
+	for item in itemsOnSurface:
+		blitter(item)
 
 	for event in pygame.event.get():
-		#if event.type == pygame.KEYDOWN:
-		#	if event.key == pygame.K_a:
+		if event.type==pygame.MOUSEBUTTONDOWN:
+			mouX,mouY = event.pos
+			mouDown = True
+			itemFound = False
+			for item in itemsOnSurface:
+				if (item.xPos-(item.itemType.xSize/2))<mouX<(item.xPos+(item.itemType.xSize/2)) and (item.yPos-(item.itemType.xSize/2))<mouY<(item.yPos+(item.itemType.ySize/2)):
+					itemFound = True
+					itemSelected=item
+			if not itemFound:
+				itemSelected=''
 
-		if event.type == pygame.QUIT:
-			mainLoop = False
+
+		if event.type==pygame.MOUSEBUTTONUP:
+			mouDown = False
+			if type(itemSelected)!=str:
+				anglin = True
+
+	if mouDown:
+		if type(itemSelected)!=str:
+			mouX,mouY = pygame.mouse.get_pos()
+			itemSelected.xPos,itemSelected.yPos = mouX,mouY
+
+	if anglin:
+		mouX,mouY = pygame.mouse.get_pos()
+		if type(itemSelected)!=str:
+			relX = mouX-itemSelected.xPos
+			relY = mouY-itemSelected.yPos
+			if relY>0:
+				item.angle=(math.degrees(math.atan(float(relX)/float(relY))))+180
+			elif 0>relY:
+				item.angle=(math.degrees(math.atan(float(relX)/float(relY))))
+
+	if event.type == pygame.QUIT:
+		mainLoop = False
 
 	pygame.display.flip()
 	clock.tick(30)
