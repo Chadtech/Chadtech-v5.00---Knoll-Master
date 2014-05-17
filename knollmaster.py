@@ -4,6 +4,7 @@ import os
 import pygame.midi
 import pygame.mixer
 import math
+import random
 
 pygame.mixer.pre_init(44100, -16, 2, 512)
 pygame.init()
@@ -48,16 +49,13 @@ def blitter(what):
 ################################
 os.chdir(os.path.abspath('items'))
 itemMapper = {}
+listOfItems = []
 for item in os.listdir(os.getcwd()):
 	xSize, ySize = pygame.image.load(item).get_size()
 	itemMapper[item[:len(item)-4]] = itemType(pygame.transform.scale(pygame.image.load(item),(xSize*2,ySize*2)).convert(),xSize*2,ySize*2)
 	itemMapper[item[:len(item)-4]].image.set_colorkey((255,255,255,255))
+	listOfItems.append(item[:len(item)-4])
 os.chdir(os.path.dirname(os.getcwd()))
-
-
-#firstDrill = itemInstance(itemMapper['drill0'],400,400,45)
-
-
 
 title=pygame.image.load('chadtechknollmastertitle.png').convert()
 title.set_colorkey((255,255,255,255))
@@ -73,7 +71,11 @@ angle = 0
 
 itemsOnSurface=[]
 
-itemsOnSurface.append(itemInstance(itemMapper['drill0'],400,400,45))
+for item in range(random.randint(1,14)):
+	xPosition = random.randint(100,900)
+	yPosition = random.randint(200,550)
+	itsAngle = random.randint(0,359)
+	itemsOnSurface.append(itemInstance(itemMapper[listOfItems[random.randint(0,len(listOfItems)-1)]],xPosition,yPosition,itsAngle))
 
 while mainLoop and not quit:
 
@@ -113,9 +115,9 @@ while mainLoop and not quit:
 			relX = mouX-itemSelected.xPos
 			relY = mouY-itemSelected.yPos
 			if relY>0:
-				item.angle=(math.degrees(math.atan(float(relX)/float(relY))))+180
+				itemSelected.angle=(math.degrees(math.atan(float(relX)/float(relY))))+180
 			elif 0>relY:
-				item.angle=(math.degrees(math.atan(float(relX)/float(relY))))
+				itemSelected.angle=(math.degrees(math.atan(float(relX)/float(relY))))
 
 	if event.type == pygame.QUIT:
 		mainLoop = False
