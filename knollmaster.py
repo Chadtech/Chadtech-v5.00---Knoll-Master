@@ -11,10 +11,20 @@ pygame.init()
 pygame.midi.init()
 clock = pygame.time.Clock()
 
-screen = pygame.display.set_mode((1000,750),pygame.RESIZABLE)
+print pygame.display.list_modes()
+resolutionX, resolutionY = pygame.display.list_modes()[0]
+screen = pygame.display.set_mode((resolutionX,resolutionY),pygame.FULLSCREEN)
+
 pygame.display.set_caption("Chadtech v5.00 : Knollmaster",)
 
-knollTable = pygame.image.load('tableB.png').convert()
+knollTable = pygame.image.load('table.png').convert()
+tableX,tableY = knollTable.get_size()
+tableX,tableY = tableX*2,tableY*2
+knollTable = pygame.transform.scale(knollTable,(tableX,tableY))
+knollTable.set_colorkey((255,255,255,255))
+
+carpetTile = pygame.image.load('carpettile0.PNG').convert()
+carpetX, carpetY = carpetTile.get_size()
 
 class knollZone:
 	def __init__(self,image,xSize,ySize,xPos,yPos):
@@ -58,13 +68,19 @@ for item in os.listdir(os.getcwd()):
 os.chdir(os.path.dirname(os.getcwd()))
 
 title=pygame.image.load('chadtechknollmastertitle.png').convert()
+titleX,titleY=title.get_size()
+titleX,titleY=titleX*4,titleY*4
+title = pygame.transform.scale(title,(titleX,titleY))
 title.set_colorkey((255,255,255,255))
+
 
 mainLoop = True
 quit = False
 mouDown = False
 anglin = False
 
+carpetScroll = 0
+titleBob = 0
 itemSelected = ''
 
 angle = 0
@@ -79,14 +95,25 @@ for item in range(random.randint(1,14)):
 
 while mainLoop and not quit:
 
-	screen.blit(knollTable,[0,0])
-	screen.blit(pygame.transform.scale(title,(564,124)),[225,5])
-	angle+=1
+	for yit in range((resolutionX/carpetX)+1):
+		for vapp in range((resolutionY/carpetY)+2):
+			screen.blit(carpetTile,[(carpetX*yit)+carpetScroll-48,(carpetY*vapp)+carpetScroll-48])
+	carpetScroll+=1
+	carpetScroll=carpetScroll%48
 
-	for item in itemsOnSurface:
-		blitter(item)
+	screen.blit(knollTable,((resolutionX-tableX)/2,(resolutionY-tableY)/2))
+	screen.blit(title,((resolutionX-titleX)/2,100+(8*(math.sin(titleBob/2.)))))
+	titleBob+=1
+
+#	for item in itemsOnSurface:
+#		blitter(item)
 
 	for event in pygame.event.get():
+
+		if event.type == pygame.KEYDOWN:
+			if event.key == pygame.K_q:
+				mainLoop=False
+
 		if event.type==pygame.MOUSEBUTTONDOWN:
 			mouX,mouY = event.pos
 			mouDown = True
@@ -97,7 +124,6 @@ while mainLoop and not quit:
 					itemSelected=item
 			if not itemFound:
 				itemSelected=''
-
 
 		if event.type==pygame.MOUSEBUTTONUP:
 			mouDown = False
