@@ -13,7 +13,6 @@ clock = pygame.time.Clock()
 
 ctCambridge = pygame.font.Font('CtCambridge.ttf',126)
 
-print pygame.display.list_modes()
 resolutionX, resolutionY = pygame.display.list_modes()[0]
 screen = pygame.display.set_mode((resolutionX,resolutionY),pygame.FULLSCREEN)
 
@@ -68,11 +67,31 @@ class itemInstance:
 		self.yPos=yPos
 		self.angle=angle
 
-def blitter(what):
+def itemBlitter(what):
 	global screen
 	placee=pygame.transform.rotate(what.itemType.image,what.angle).convert()
 	placeeX,placeeY = placee.get_size()
 	screen.blit(placee,[what.xPos-(placeeX/2),what.yPos-(placeeY/2)])
+
+def supercoolText(inputString,where):
+	whereX,whereY = where
+	global screen
+	screen.blit(ctCambridge.render(inputString,False,(24,13,170)),[whereX+8,whereY])
+	screen.blit(ctCambridge.render(inputString,False,(24,13,170)),[whereX-8,whereY])
+	screen.blit(ctCambridge.render(inputString,False,(24,13,170)),[whereX,whereY+8])
+	screen.blit(ctCambridge.render(inputString,False,(24,13,170)),[whereX,whereY-8])
+	screen.blit(ctCambridge.render(inputString,False,(24,13,170)),[whereX+4,whereY+4])
+	screen.blit(ctCambridge.render(inputString,False,(24,13,170)),[whereX-4,whereY+4])
+	screen.blit(ctCambridge.render(inputString,False,(24,13,170)),[whereX+4,whereY-4])
+	screen.blit(ctCambridge.render(inputString,False,(24,13,170)),[whereX-4,whereY-4])
+
+
+	screen.blit(ctCambridge.render(inputString,False,(63,72,204)),[whereX+4,whereY])
+	screen.blit(ctCambridge.render(inputString,False,(63,72,204)),[whereX-4,whereY])
+	screen.blit(ctCambridge.render(inputString,False,(63,72,204)),[whereX,whereY-4])
+	screen.blit(ctCambridge.render(inputString,False,(63,72,204)),[whereX,whereY+4])
+
+	screen.blit(ctCambridge.render(inputString,False,(191,240,234)),[whereX,whereY])
 
 ################################
 ###### Load all the items ######
@@ -108,21 +127,13 @@ jusUp=False
 anglin = False
 
 carpetScroll = 0
-titleBob = 0
+bob = 0
 itemSelected = ''
+scoreTrigger = False
 
 itemsOnSurface=[]
 
 timer = 500
-
-
-
-
-#for item in range(random.randint(1,14)):
-#	xPosition = random.randint(leftBou,rightBou)
-#	yPosition = random.randint(topBou,botBou)
-#	itsAngle = random.randint(0,359)
-#	itemsOnSurface.append(itemInstance(itemMapper[listOfItems[random.randint(0,len(listOfItems)-1)]],xPosition,yPosition,itsAngle))
 
 itemsOnSurface.append(itemInstance(itemMapper['drill0'],leftBou+itemMapper['drill0'].xSize,botBou-itemMapper['drill0'].ySize,60))
 itemsOnSurface.append(itemInstance(itemMapper['drill0'],itemMapper['drill0'].xSize+leftBou,topBou+itemMapper['drill0'].ySize,66))
@@ -143,31 +154,35 @@ while mainLoop and not quit:
 	carpetScroll=carpetScroll%48
 
 	screen.blit(knollTable,((resolutionX-tableX)/2,(resolutionY-tableY)/2))
-	screen.blit(title,((resolutionX-titleX)/2,100+(8*(math.sin(titleBob/2.)))))
-	titleBob+=1
 
 	for item in itemsOnSurface:
-		blitter(item)
+		itemBlitter(item)
 
-	screen.blit(ctCambridge.render('Time : '+str(timer),False,(0,0,255)),[63,resolutionY-63])
+	supercoolText('CHADTECH:KNOLLMASTER',(20,20+(8*math.sin(bob/4.))))
+	supercoolText('Time:'+str(timer),(20,93+(8*math.sin(bob/4.))))
+	if scoreTrigger:
+		supercoolText('Score:'+str(angleAve)[:6]+'%',(20,166+(8*math.sin(bob/4.))))
+	bob+=1
 
 	if not timer<1:
 		timer-=1
 	else:
-		angleAve=0
-		for item in itemsOnSurface:
-			print item.angle
-			angleAve+=math.fabs(item.angle)
-		angleAve=float(angleAve)/float(len(itemsOnSurface))
-		angleAve=(180.-angleAve)/180.
-		angleAve=angleAve**(100)
-		angleAve=100.*angleAve
+		if not scoreTrigger:
+			angleAve=0
+			for item in itemsOnSurface:
+				angleAve+=math.fabs(item.angle)
+			angleAve=float(angleAve)/float(len(itemsOnSurface))
+			angleAve=(180.-angleAve)/180.
+			angleAve=angleAve**(100)
+			angleAve=100.*angleAve
 
-		screen.blit(ctCambridge.render('Score : '+str(angleAve)[:4]+'%',False,(0,0,255)),[367,resolutionY-63])
-		screen.blit(ctCambridge.render('Score : '+str(angleAve)[:4]+'%',False,(0,0,255)),[359,resolutionY-63])
-		screen.blit(ctCambridge.render('Score : '+str(angleAve)[:4]+'%',False,(0,0,255)),[363,resolutionY-59])
-		screen.blit(ctCambridge.render('Score : '+str(angleAve)[:4]+'%',False,(0,0,255)),[363,resolutionY-67])
-		screen.blit(ctCambridge.render('Score : '+str(angleAve)[:4]+'%',False,(255,255,255)),[363,resolutionY-63])
+			penaltyCou=0
+			for item in itemsOnSurface:
+
+
+			scoreTrigger = True
+
+
 
 	for event in pygame.event.get():
 
