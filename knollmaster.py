@@ -11,6 +11,8 @@ pygame.init()
 pygame.midi.init()
 clock = pygame.time.Clock()
 
+ctCambridge = pygame.font.Font('CtCambridge.ttf',126)
+
 print pygame.display.list_modes()
 resolutionX, resolutionY = pygame.display.list_modes()[0]
 screen = pygame.display.set_mode((resolutionX,resolutionY),pygame.FULLSCREEN)
@@ -27,17 +29,35 @@ carpetTile = pygame.image.load('carpettile0.PNG').convert()
 carpetX, carpetY = carpetTile.get_size()
 
 class knollZone:
-	def __init__(self,image,xSize,ySize,xPos,yPos):
+	def __init__(self,image):
+		image=pygame.image.load(image).convert()
+		xSize,ySize=image.get_size()
+		xSize,ySize=xSize*2,ySize*2
+		self.image=pygame.transform.scale(image,(xSize,ySize))
+		self.image=image.set_colorkey((255,255,255),255)
+
 		self.image=image
 		self.xSize=xSize
 		self.ySize=ySize
-		self.xPos=xPos
-		self.yPos=yPos
-		self.angle=angle
+
+table0 = knollZone('table.png')
+surface=table0
+
+leftBou=(resolutionX-surface.xSize)/2
+rightBou=leftBou+surface.xSize
+
+topBou=(resolutionY-surface.ySize)/2
+botBou=topBou+surface.ySize
 
 class itemType:
-	def __init__(self,image,xSize,ySize):
-		self.image = image
+	def __init__(self,image):
+		image=pygame.image.load(image).convert()
+		xSize,ySize=image.get_size()
+		xSize,ySize=xSize*2,ySize*2
+		image=pygame.transform.scale(image,(xSize,ySize))
+		self.image=image.set_colorkey((255,255,255),255)
+
+		self.image=image
 		self.xSize=xSize
 		self.ySize=ySize
 
@@ -62,11 +82,13 @@ itemMapper = {}
 listOfItems = []
 for item in os.listdir(os.getcwd()):
 	xSize, ySize = pygame.image.load(item).get_size()
-	itemMapper[item[:len(item)-4]] = itemType(pygame.transform.scale(pygame.image.load(item),(xSize*2,ySize*2)).convert(),xSize*2,ySize*2)
-	itemMapper[item[:len(item)-4]].image.set_colorkey((255,255,255,255))
+	itemMapper[item[:len(item)-4]] = itemType(item)
 	listOfItems.append(item[:len(item)-4])
 os.chdir(os.path.dirname(os.getcwd()))
 
+################################
+#### 'Chadtech Knollmaster' ####
+################################
 title=pygame.image.load('chadtechknollmastertitle.png').convert()
 titleX,titleY=title.get_size()
 titleX,titleY=titleX*4,titleY*4
@@ -74,24 +96,43 @@ title = pygame.transform.scale(title,(titleX,titleY))
 title.set_colorkey((255,255,255,255))
 
 
+################################
+### Declaring some Variables ###
+################################
+
+### While true the game runs
 mainLoop = True
 quit = False
 mouDown = False
+jusUp=False
 anglin = False
 
 carpetScroll = 0
 titleBob = 0
 itemSelected = ''
 
-angle = 0
-
 itemsOnSurface=[]
 
-for item in range(random.randint(1,14)):
-	xPosition = random.randint(100,900)
-	yPosition = random.randint(200,550)
-	itsAngle = random.randint(0,359)
-	itemsOnSurface.append(itemInstance(itemMapper[listOfItems[random.randint(0,len(listOfItems)-1)]],xPosition,yPosition,itsAngle))
+timer = 500
+
+
+
+
+#for item in range(random.randint(1,14)):
+#	xPosition = random.randint(leftBou,rightBou)
+#	yPosition = random.randint(topBou,botBou)
+#	itsAngle = random.randint(0,359)
+#	itemsOnSurface.append(itemInstance(itemMapper[listOfItems[random.randint(0,len(listOfItems)-1)]],xPosition,yPosition,itsAngle))
+
+itemsOnSurface.append(itemInstance(itemMapper['drill0'],leftBou+itemMapper['drill0'].xSize,botBou-itemMapper['drill0'].ySize,60))
+itemsOnSurface.append(itemInstance(itemMapper['drill0'],itemMapper['drill0'].xSize+leftBou,topBou+itemMapper['drill0'].ySize,66))
+
+itemsOnSurface.append(itemInstance(itemMapper['pokeball0'],itemMapper['pokeball0'].xSize+300+leftBou,topBou+itemMapper['pokeball0'].ySize+27,166))
+itemsOnSurface.append(itemInstance(itemMapper['pokeball0'],itemMapper['pokeball0'].xSize+440+leftBou,topBou+itemMapper['pokeball0'].ySize+127,180))
+
+itemsOnSurface.append(itemInstance(itemMapper['clamp0'],itemMapper['clamp0'].xSize+leftBou+700,topBou+itemMapper['clamp0'].ySize+200,315))
+
+
 
 while mainLoop and not quit:
 
@@ -105,8 +146,28 @@ while mainLoop and not quit:
 	screen.blit(title,((resolutionX-titleX)/2,100+(8*(math.sin(titleBob/2.)))))
 	titleBob+=1
 
-#	for item in itemsOnSurface:
-#		blitter(item)
+	for item in itemsOnSurface:
+		blitter(item)
+
+	screen.blit(ctCambridge.render('Time : '+str(timer),False,(0,0,255)),[63,resolutionY-63])
+
+	if not timer<1:
+		timer-=1
+	else:
+		angleAve=0
+		for item in itemsOnSurface:
+			print item.angle
+			angleAve+=math.fabs(item.angle)
+		angleAve=float(angleAve)/float(len(itemsOnSurface))
+		angleAve=(180.-angleAve)/180.
+		angleAve=angleAve**(100)
+		angleAve=100.*angleAve
+
+		screen.blit(ctCambridge.render('Score : '+str(angleAve)[:4]+'%',False,(0,0,255)),[367,resolutionY-63])
+		screen.blit(ctCambridge.render('Score : '+str(angleAve)[:4]+'%',False,(0,0,255)),[359,resolutionY-63])
+		screen.blit(ctCambridge.render('Score : '+str(angleAve)[:4]+'%',False,(0,0,255)),[363,resolutionY-59])
+		screen.blit(ctCambridge.render('Score : '+str(angleAve)[:4]+'%',False,(0,0,255)),[363,resolutionY-67])
+		screen.blit(ctCambridge.render('Score : '+str(angleAve)[:4]+'%',False,(255,255,255)),[363,resolutionY-63])
 
 	for event in pygame.event.get():
 
@@ -130,6 +191,10 @@ while mainLoop and not quit:
 			if type(itemSelected)!=str:
 				anglin = True
 
+		if event.type == pygame.QUIT:
+			mainLoop=False
+			quit=True
+
 	if mouDown:
 		if type(itemSelected)!=str:
 			mouX,mouY = pygame.mouse.get_pos()
@@ -145,8 +210,7 @@ while mainLoop and not quit:
 			elif 0>relY:
 				itemSelected.angle=(math.degrees(math.atan(float(relX)/float(relY))))
 
-	if event.type == pygame.QUIT:
-		mainLoop = False
+	
 
 	pygame.display.flip()
 	clock.tick(30)
