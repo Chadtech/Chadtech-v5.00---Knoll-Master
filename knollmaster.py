@@ -289,7 +289,7 @@ while mainLoop and not quit:
 			mouDown = True
 			itemFound = False
 			for item in itemsOnSurface:
-				if (item.xPos-(item.itemType.xSize/2))<mouX<(item.xPos+(item.itemType.xSize/2)) and (item.yPos-(item.itemType.xSize/2))<mouY<(item.yPos+(item.itemType.ySize/2)):
+				if (item.xPos-(item.itemType.xSize/2))<mouX<(item.xPos+(item.itemType.xSize/2)) and (item.yPos-(item.itemType.ySize/2))<mouY<(item.yPos+(item.itemType.ySize/2)):
 					itemFound = True
 					itemSelected=item
 			if not itemFound:
