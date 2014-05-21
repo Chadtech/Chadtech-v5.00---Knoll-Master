@@ -205,12 +205,15 @@ while mainLoop and not quit:
 
 	supercoolText('CHADTECH:KNOLLMASTER',(20,20+(8*math.sin(bob/4.))))
 	supercoolText('Time:'+str(timer),(20,93+(8*math.sin(bob/4.))))
+	supercoolText("Press Q to quit",((resolutionX-485),20+(8*math.sin(bob/4.))))
 	if scoreTrigger:
-		supercoolText('Score:'+str(angleAve)[:6]+'%',(20,166+(8*math.sin(bob/4.))))
+		supercoolText('Final Score:'+str(angleAve)[:6]+'%',(20,239+(8*math.sin(bob/4.))))
+		supercoolText('#of Penalties:'+str(penaltyCou),(20,166+(8*math.sin(bob/4.))))
 		if groupBlink<80:
 			if ((groupBlink/5)%2) == 1:
 				for item in itemsOnSurface:
 					t,r,b,l = itemRegions[item.itemType.name]
+					pygame.draw.rect(screen, (255,192,192),(l,t,r-l,b-t),4)
 					pygame.draw.rect(screen, (255,0,0),(l,t,r-l,b-t),2)
 			groupBlink+=1
 	bob+=1
@@ -244,6 +247,20 @@ while mainLoop and not quit:
 				itemRegions[item.itemType.name]=(tBou,rBou,bBou,lBou)
 
 				print item.itemType.name, itemRegions[item.itemType.name]
+
+			for region in itemRegions:
+				tBou,rBou,bBou,lBou = itemRegions[region]
+				if tBou<topBou:
+					penaltyCou+=1
+				if botBou<bBou:
+					penaltyCou+=1
+					print 'bot violation'+region
+				if rightBou<rBou:
+					penaltyCou+=1
+				if lBou<leftBou:
+					penaltyCou+=1
+
+			angleAve-=penaltyCou*25
 
 	#def getBoundaries(self):
 	#	global itemsOnSurface
