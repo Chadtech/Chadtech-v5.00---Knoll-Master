@@ -135,11 +135,11 @@ os.chdir(os.path.dirname(os.getcwd()))
 ################################
 #### 'Chadtech Knollmaster' ####
 ################################
-title=pygame.image.load('chadtechknollmastertitle.png').convert()
-titleX,titleY=title.get_size()
-titleX,titleY=titleX*4,titleY*4
-title = pygame.transform.scale(title,(titleX,titleY))
-title.set_colorkey((255,255,255,255))
+#title=pygame.image.load('chadtechknollmastertitle.png').convert()
+#titleX,titleY=title.get_size()
+#titleX,titleY=titleX*4,titleY*4
+#title = pygame.transform.scale(title,(titleX,titleY))
+#title.set_colorkey((255,255,255,255))
 
 
 
