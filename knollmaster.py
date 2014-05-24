@@ -47,18 +47,6 @@ class region:
 		self.bBou=''
 		self.itemType=itemType
 		self.exists=False
-	#def getBoundaries(self):
-	#	global itemsOnSurface
-	#	for item in itemsOnSurface:
-	#		if type(self.lBou)==str or (type(self.lBou)==int and (item.xPos-(item.itemType.xSize/2))<self.lBou):
-	#			self.lBou=item.xPos-(item.itemType.xSize/2)
-	#		if type(self.rBou)==str or (type(self.rBou)==int and self.rBou<(item.xPos+(item.itemType.xSize/2))):
-	#			self.rBou=item.xPos+(item.itemType.xSize/2)
-	#		if type(self.tBou)==str or (type(self.tBou)==int and self.tBou<(item.yPos+(item.itemType.ySize/2))):
-	#			self.tBou=item.yPos+(item.itemType.ySize/2)
-	#		if type(self.bBou)==str or (type(self.bBou)==int and (item.yPos-(item.itemType.ySize/2))<self.bBou):
-	#			self.bBou=item.yPos-(item.itemType.ySize/2)
-
 
 table0 = knollZone('table.png')
 surface=table0
@@ -118,32 +106,101 @@ def supercoolText(inputString,where):
 
 	screen.blit(ctCambridge.render(inputString,False,(191,240,234)),[whereX,whereY])
 
+##### Check if regions overlap
+##### Regions are quadtuples where (top boundary, right boundary, bottom boundary, left boundary)
+##### The function Checks by seeing if two or more of the four boundaries cross each other
+def checkForOverlap(regionOn,regionTw):
+
+		tlIn = False
+		trIn = False
+		brIn = False
+		blIn = False
+
+		tOn,rOn,bOn,lOn = regionOn
+		tTw,rTw,bTw,lTw = regionTw
+
+		violationCou = 0
+
+		corners=[
+			(lOn,tOn),
+			(rOn,tOn),
+			(rOn,bOn),
+			(lOn,bOn)
+			]
+
+		return not (bTw<tOn or bOn<tTw or rTw<lOn or rOn<lTw)
+
+#####
+#####
+#####
+#####
+#####
+
+		#for corner in corners:
+		#	if (lTw<corner[0] and corner[0]<rTw) and (tTw<corner[1] and corner[1]<bTw):
+		#		violationCou+=1
+
+		#return violationCou
+
+#####
+#####
+#####
+#####
+#####
+
+		#if tTw<bOn:
+		#	bViolate=True
+		#if tOn<bTw:
+		#	tViolate=True
+		#if lTw<rOn:
+		#	rViolate=True
+		#if lOn<rTw:
+		#	lViolate=True
+
+		#if (tViolate or bViolate) and (lViolate or rViolate):
+		#	print tViolate, bViolate, lViolate, rViolate, 'DOIN TRUE'
+		#	return True
+		#else:
+		#	print tViolate, bViolate, lViolate, rViolate, 'DOIN FALSE'
+		#	return False
+
+#####
+#####
+#####
+#####
+#####
+
+		#			tBou,rBou,bBou,lBou = itemRegions[item.itemType.name]
+		#		if type(tBou)==str or (type(tBou)==int and (item.yPos-(item.itemType.ySize/2))<tBou):
+		#			tBou=item.yPos-(item.itemType.ySize/2)
+		#		if type(rBou)==str or (type(rBou)==int and rBou<(item.xPos+(item.itemType.xSize/2))):
+		#			rBou=item.xPos+(item.itemType.xSize/2)
+		#		if type(bBou)==str or (type(bBou)==int and bBou<(item.yPos+(item.itemType.ySize/2))):
+		#			bBou=item.yPos+(item.itemType.ySize/2)
+		#		if type(lBou)==str or (type(lBou)==int and (item.xPos-(item.itemType.xSize/2))<lBou):
+		#			lBou=item.xPos-(item.itemType.xSize/2)
+
+		#	for region in itemRegions:
+		#		tBou,rBou,bBou,lBou = itemRegions[region]
+		#		if tBou<topBou:
+		#			outOfBoundCou+=1
+		#		if botBou<bBou:
+		#			outOfBoundCou+=1
+		#		if rightBou<rBou:
+		#			outOfBoundCou+=1
+		#		if lBou<leftBou:
+		#			outOfBoundCou+=1
+
 ################################
 ###### Load all the items ######
 ################################
 os.chdir(os.path.abspath('items'))
 itemMapper = {}
-itemMappee = {}
-listOfItems = []
 for item in os.listdir(os.getcwd()):
 	xSize, ySize = pygame.image.load(item).get_size()
 	itemMapper[item[:len(item)-4]] = itemType(item)
 	itemMapper[itemType(item)]=item[:len(item)-4]
-	listOfItems.append(item[:len(item)-4])
 os.chdir(os.path.dirname(os.getcwd()))
-
-################################
-#### 'Chadtech Knollmaster' ####
-################################
-#title=pygame.image.load('chadtechknollmastertitle.png').convert()
-#titleX,titleY=title.get_size()
-#titleX,titleY=titleX*4,titleY*4
-#title = pygame.transform.scale(title,(titleX,titleY))
-#title.set_colorkey((255,255,255,255))
-
-
-
-
 
 ################################
 ### Declaring some Variables ###
@@ -152,7 +209,7 @@ os.chdir(os.path.dirname(os.getcwd()))
 ### While true the game runs
 mainLoop = True
 quit = False
-mouDown = False
+mouseDown = False
 jusUp=False
 anglin = False
 
@@ -172,11 +229,13 @@ groupBlink = 0
 
 
 itemsOnSurface.append(itemInstance(itemMapper['drill0'],leftBou+itemMapper['drill0'].xSize,botBou-itemMapper['drill0'].ySize,60))
-itemsOnSurface.append(itemInstance(itemMapper['drill0'],itemMapper['drill0'].xSize+leftBou,topBou+itemMapper['drill0'].ySize,66))
+
+itemsOnSurface.append(itemInstance(itemMapper['calculator0'],leftBou+itemMapper['calculator0'].xSize+200,botBou-itemMapper['calculator0'].ySize,160))
 
 itemsOnSurface.append(itemInstance(itemMapper['pokeball0'],itemMapper['pokeball0'].xSize+300+leftBou,topBou+itemMapper['pokeball0'].ySize+27,166))
 itemsOnSurface.append(itemInstance(itemMapper['pokeball0'],itemMapper['pokeball0'].xSize+440+leftBou,topBou+itemMapper['pokeball0'].ySize+127,180))
 
+itemsOnSurface.append(itemInstance(itemMapper['clamp0'],itemMapper['clamp0'].xSize+leftBou+50,topBou+itemMapper['clamp0'].ySize,66))
 itemsOnSurface.append(itemInstance(itemMapper['clamp0'],itemMapper['clamp0'].xSize+leftBou+500,topBou+itemMapper['clamp0'].ySize+200,315))
 
 ################################
@@ -188,7 +247,6 @@ itemTypeChecker =[]
 
 for item in itemsOnSurface:
 	itemRegions[item.itemType.name]=('','','','')
-
 
 while mainLoop and not quit:
 
@@ -208,7 +266,8 @@ while mainLoop and not quit:
 	supercoolText("Press Q to quit",((resolutionX-485),20+(8*math.sin(bob/4.))))
 	if scoreTrigger:
 		supercoolText('Final Score:'+str(angleAve)[:6]+'%',(20,239+(8*math.sin(bob/4.))))
-		supercoolText('#of Penalties:'+str(penaltyCou),(20,166+(8*math.sin(bob/4.))))
+		supercoolText('Out of Bounds #:'+str(outOfBoundCou),(20,166+(8*math.sin(bob/4.))))
+		supercoolText('Overlap #:'+str(overlapCou),(20,396+(8*math.sin(bob/4.))))
 		if groupBlink<80:
 			if ((groupBlink/5)%2) == 1:
 				for item in itemsOnSurface:
@@ -230,9 +289,13 @@ while mainLoop and not quit:
 			angleAve=angleAve**(100)
 			angleAve=100.*angleAve
 
-			penaltyCou=0
+			##### outOfBoundCou is the penalty of exceeding the knoll zone (the table)
+			outOfBoundCou=0
+			#### overlapCou is the penalty of overlapping item regions
+			overlapCou=0
 			itemZones = []
 			
+			##### Define the boundaries for the region
 			for item in itemsOnSurface:
 				tBou,rBou,bBou,lBou = itemRegions[item.itemType.name]
 				if type(tBou)==str or (type(tBou)==int and (item.yPos-(item.itemType.ySize/2))<tBou):
@@ -246,33 +309,32 @@ while mainLoop and not quit:
 
 				itemRegions[item.itemType.name]=(tBou,rBou,bBou,lBou)
 
-				print item.itemType.name, itemRegions[item.itemType.name]
-
+			##### See if the region exceeds the boundaries of the table
 			for region in itemRegions:
 				tBou,rBou,bBou,lBou = itemRegions[region]
 				if tBou<topBou:
-					penaltyCou+=1
+					outOfBoundCou+=1
 				if botBou<bBou:
-					penaltyCou+=1
-					print 'bot violation'+region
+					outOfBoundCou+=1
 				if rightBou<rBou:
-					penaltyCou+=1
+					outOfBoundCou+=1
 				if lBou<leftBou:
-					penaltyCou+=1
+					outOfBoundCou+=1
 
-			angleAve-=penaltyCou*25
+			overlapCou=0
+			setOfItemTypes =set([])
+			for item in itemsOnSurface:
+				setOfItemTypes.add(item.itemType.name)
+			print setOfItemTypes
+			for itemType in setOfItemTypes:
+				for anotherItemType in setOfItemTypes:
+					if itemType!=anotherItemType:
+						if checkForOverlap(itemRegions[itemType],itemRegions[anotherItemType]):
+							overlapCou+=1
 
-	#def getBoundaries(self):
-	#	global itemsOnSurface
-	#	for item in itemsOnSurface:
-	#		if type(self.lBou)==str or (type(self.lBou)==int and (item.xPos-(item.itemType.xSize/2))<self.lBou):
-	#			self.lBou=item.xPos-(item.itemType.xSize/2)
-	#		if type(self.rBou)==str or (type(self.rBou)==int and self.rBou<(item.xPos+(item.itemType.xSize/2))):
-	#			self.rBou=item.xPos+(item.itemType.xSize/2)
-	#		if type(self.tBou)==str or (type(self.tBou)==int and self.tBou<(item.yPos+(item.itemType.ySize/2))):
-	#			self.tBou=item.yPos+(item.itemType.ySize/2)
-	#		if type(self.bBou)==str or (type(self.bBou)==int and (item.yPos-(item.itemType.ySize/2))<self.bBou):
-	#			self.bBou=item.yPos-(item.itemType.ySize/2)
+			overlapCou=overlapCou/2
+			angleAve-=outOfBoundCou*25
+			angleAve-=overlapCou*25
 
 			scoreTrigger = True
 
@@ -284,10 +346,13 @@ while mainLoop and not quit:
 			if event.key == pygame.K_q:
 				mainLoop=False
 
+		##### If they click down
 		if event.type==pygame.MOUSEBUTTONDOWN:
-			mouX,mouY = event.pos
-			mouDown = True
+			##### Get mouse position
+			mouX,mouY = event.pos		
+			mouseDown = True
 			itemFound = False
+			##### Run through every item, and see if you clicked within its boundaries
 			for item in itemsOnSurface:
 				if (item.xPos-(item.itemType.xSize/2))<mouX<(item.xPos+(item.itemType.xSize/2)) and (item.yPos-(item.itemType.ySize/2))<mouY<(item.yPos+(item.itemType.ySize/2)):
 					itemFound = True
@@ -296,15 +361,19 @@ while mainLoop and not quit:
 				itemSelected=''
 
 		if event.type==pygame.MOUSEBUTTONUP:
-			mouDown = False
+			mouX,mouY = event.pos
+			mouseDown = False
 			if type(itemSelected)!=str:
-				anglin = True
+				if leftBou<mouX-(itemSelected.itemType.xSize/2) and mouX+(itemSelected.itemType.xSize/2)<rightBou and topBou<mouY-(itemSelected.itemType.ySize/2) and mouY+(itemSelected.itemType.ySize/2)<botBou:
+					anglin = True
+				else:
+					mouseDown=True
 
 		if event.type == pygame.QUIT:
 			mainLoop=False
 			quit=True
 
-	if mouDown:
+	if mouseDown:
 		if type(itemSelected)!=str:
 			mouX,mouY = pygame.mouse.get_pos()
 			itemSelected.xPos,itemSelected.yPos = mouX,mouY
