@@ -130,67 +130,6 @@ def checkForOverlap(regionOn,regionTw):
 
 		return not (bTw<tOn or bOn<tTw or rTw<lOn or rOn<lTw)
 
-#####
-#####
-#####
-#####
-#####
-
-		#for corner in corners:
-		#	if (lTw<corner[0] and corner[0]<rTw) and (tTw<corner[1] and corner[1]<bTw):
-		#		violationCou+=1
-
-		#return violationCou
-
-#####
-#####
-#####
-#####
-#####
-
-		#if tTw<bOn:
-		#	bViolate=True
-		#if tOn<bTw:
-		#	tViolate=True
-		#if lTw<rOn:
-		#	rViolate=True
-		#if lOn<rTw:
-		#	lViolate=True
-
-		#if (tViolate or bViolate) and (lViolate or rViolate):
-		#	print tViolate, bViolate, lViolate, rViolate, 'DOIN TRUE'
-		#	return True
-		#else:
-		#	print tViolate, bViolate, lViolate, rViolate, 'DOIN FALSE'
-		#	return False
-
-#####
-#####
-#####
-#####
-#####
-
-		#			tBou,rBou,bBou,lBou = itemRegions[item.itemType.name]
-		#		if type(tBou)==str or (type(tBou)==int and (item.yPos-(item.itemType.ySize/2))<tBou):
-		#			tBou=item.yPos-(item.itemType.ySize/2)
-		#		if type(rBou)==str or (type(rBou)==int and rBou<(item.xPos+(item.itemType.xSize/2))):
-		#			rBou=item.xPos+(item.itemType.xSize/2)
-		#		if type(bBou)==str or (type(bBou)==int and bBou<(item.yPos+(item.itemType.ySize/2))):
-		#			bBou=item.yPos+(item.itemType.ySize/2)
-		#		if type(lBou)==str or (type(lBou)==int and (item.xPos-(item.itemType.xSize/2))<lBou):
-		#			lBou=item.xPos-(item.itemType.xSize/2)
-
-		#	for region in itemRegions:
-		#		tBou,rBou,bBou,lBou = itemRegions[region]
-		#		if tBou<topBou:
-		#			outOfBoundCou+=1
-		#		if botBou<bBou:
-		#			outOfBoundCou+=1
-		#		if rightBou<rBou:
-		#			outOfBoundCou+=1
-		#		if lBou<leftBou:
-		#			outOfBoundCou+=1
-
 ################################
 ###### Load all the items ######
 ################################
@@ -268,6 +207,7 @@ while mainLoop and not quit:
 		supercoolText('Final Score:'+str(angleAve)[:6]+'%',(20,239+(8*math.sin(bob/4.))))
 		supercoolText('Out of Bounds #:'+str(outOfBoundCou),(20,166+(8*math.sin(bob/4.))))
 		supercoolText('Overlap #:'+str(overlapCou),(20,396+(8*math.sin(bob/4.))))
+		supercoolText('Excess #:'+str(excessSizeCou),(20,486+(8*math.sin(bob/4.))))
 		if groupBlink<80:
 			if ((groupBlink/5)%2) == 1:
 				for item in itemsOnSurface:
@@ -321,6 +261,7 @@ while mainLoop and not quit:
 				if lBou<leftBou:
 					outOfBoundCou+=1
 
+			##### For every item region on the table, see if it overlaps with the other regions
 			overlapCou=0
 			setOfItemTypes =set([])
 			for item in itemsOnSurface:
@@ -331,8 +272,30 @@ while mainLoop and not quit:
 					if itemType!=anotherItemType:
 						if checkForOverlap(itemRegions[itemType],itemRegions[anotherItemType]):
 							overlapCou+=1
-
+			#### The code double counts every over lap, so I divide it by 2 (region a and b overlapping is a single over lap, but when counting, the code counts a overlapping b, and b overlapping a as distinct)
 			overlapCou=overlapCou/2
+
+			##### For every item region on the table, see if its excessively large
+			excessSizeCou=0
+			setOfItemTypes =set([])
+			for item in itemsOnSurface:
+				setOfItemTypes.add(item.itemType.name)
+			for itemType in setOfItemTypes:
+				tSide,rSide,bSide,lSide = itemRegions[itemType]
+				regionWidth,regionHeight = rSide-lSide,bSide-tSide
+				halfItsPerimeter=regionWidth+regionHeight
+				numberOfInstances=0
+				for item in itemsOnSurface:
+					if item.itemType.name==itemType:
+						numberOfInstances+=1
+
+				numberTall=(regionHeight/itemMapper[itemType].ySize)
+				numberWide=(regionWidth/itemMapper[itemType].xSize)
+				amountCouldFit = numberTall*numberWide
+				excessSizeCou+=(amountCouldFit-numberOfInstances)
+
+
+			angleAve-=excessSizeCou*10
 			angleAve-=outOfBoundCou*25
 			angleAve-=overlapCou*25
 
