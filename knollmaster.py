@@ -204,10 +204,23 @@ while mainLoop and not quit:
 	supercoolText('Time:'+str(timer),(20,93+(8*math.sin(bob/4.))))
 	supercoolText("Press Q to quit",((resolutionX-485),20+(8*math.sin(bob/4.))))
 	if scoreTrigger:
-		supercoolText('Final Score:'+str(angleAve)[:6]+'%',(20,239+(8*math.sin(bob/4.))))
-		supercoolText('Out of Bounds #:'+str(outOfBoundCou),(20,166+(8*math.sin(bob/4.))))
-		supercoolText('Overlap #:'+str(overlapCou),(20,396+(8*math.sin(bob/4.))))
-		supercoolText('Excess #:'+str(excessSizeCou),(20,486+(8*math.sin(bob/4.))))
+		lineNumber=3
+		supercoolText('Penalties : ',(20,73*lineNumber+(8*math.sin(bob/4.))))
+		lineNumber+=1
+		supercoolText('Out of Bounds = '+str(outOfBoundCou),(93,73*lineNumber+(8*math.sin(bob/4.))))
+		lineNumber+=1
+		supercoolText('Overlapping = '+str(overlapCou),(93,73*lineNumber+(8*math.sin(bob/4.))))
+		lineNumber+=1
+		supercoolText('Excess size = '+str(excessSizeCou),(93,73*lineNumber+(8*math.sin(bob/4.))))
+		lineNumber+=1
+		supercoolText('Total penalties = -'+str(excessSizeCou+overlapCou+outOfBoundCou)+' x 25%',(93,73*lineNumber+(8*math.sin(bob/4.))))
+		lineNumber+=1
+		supercoolText('                = -'+str(((excessSizeCou)*10)+(overlapCou+outOfBoundCou)*25)+'%',(93,73*lineNumber+(8*math.sin(bob/4.))))
+		lineNumber+=1
+		supercoolText('Final Score = '+str(angleAve)[:6]+'%',(20,73*lineNumber+(8*math.sin(bob/4.))))
+		lineNumber+=1
+
+
 		if groupBlink<80:
 			if ((groupBlink/5)%2) == 1:
 				for item in itemsOnSurface:
