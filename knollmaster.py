@@ -365,7 +365,7 @@ while mainLoop and not quit:
 			angleAve-=overlapCou*25
 
 			scoreTrigger = True
-	if (now-beginningOfTime)>5:
+	if (now-beginningOfTime)>=5:
 		for event in pygame.event.get():
 
 			if event.type == pygame.KEYDOWN:
@@ -415,7 +415,7 @@ while mainLoop and not quit:
 					itemSelected.angle=(math.degrees(math.atan(float(relX)/float(relY))))
 
 	else:
-		supercoolText(str(6-(now-beginningOfTime)),(resolutionX/2,resolutionY/2),double=True)
+		supercoolText(str(5-(now-beginningOfTime)),(resolutionX/2,resolutionY/2),double=True)
 
 
 
