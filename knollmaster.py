@@ -5,6 +5,7 @@ import pygame.midi
 import pygame.mixer
 import math
 import random
+import time
 
 pygame.mixer.pre_init(44100, -16, 2, 512)
 pygame.init()
@@ -17,7 +18,7 @@ ctCambridge1 = pygame.font.Font('CtCambridge.ttf',252)
 resolutionX, resolutionY = pygame.display.list_modes()[0]
 screen = pygame.display.set_mode((resolutionX,resolutionY),pygame.FULLSCREEN)
 
-pygame.display.set_caption("Chadtech v5.00 : Knollmaster",)
+pygame.display.set_caption("Chadtech v5.01 : Knollmaster",)
 
 longlines = pygame.image.load('longlines.PNG').convert()
 
@@ -174,6 +175,7 @@ quit = False
 mouseDown = False
 jusUp=False
 anglin = False
+start=False
 
 carpetScroll = 0
 bob = 0
@@ -184,6 +186,8 @@ itemsOnSurface=[]
 
 timer = 500
 groupBlink = 0 
+
+howLongYouHaveToKnollEverything = 15
 
 ################################
 ##### Load items in level ######
@@ -213,10 +217,10 @@ while intro and not quit:
 
 	screen.fill((73,147,182))
 	lx,ly=longlines.get_size()
-	screen.blit(longlines,[0,resolutionY-ly])
+	screen.blit(longlines,[300,resolutionY-ly])
 
-	supercoolText('CHADTECH :',(resolutionX/2-700,resolutionY/2-400),double=True)
-	supercoolText('v5.00 -- KNOLLMASTER',(resolutionX/2-700,resolutionY/2-260),double=True)
+	supercoolText('CHADTECH :',(20,20),double=True)
+	supercoolText('v5.01 -- KNOLLMASTER',(20,160),double=True)
 
 	supercoolText('Press Any Key To Start',(resolutionX/2,resolutionY/2))
 
@@ -227,12 +231,18 @@ while intro and not quit:
 	pygame.display.flip()
 	clock.tick(30)
 
+now =(time.gmtime()[3]*(3600))+(time.gmtime()[4]*(60))+(time.gmtime()[5])
+beginningOfTime =0
+beginningOfTime+=now 
 
 while mainLoop and not quit:
+
+	now=(time.gmtime()[3]*(3600))+(time.gmtime()[4]*(60))+(time.gmtime()[5])
 
 	for yit in range((resolutionX/carpetX)+1):
 		for vapp in range((resolutionY/carpetY)+2):
 			screen.blit(carpetTile,[(carpetX*yit)+carpetScroll-48,(carpetY*vapp)+carpetScroll-48])
+
 	carpetScroll+=1
 	carpetScroll=carpetScroll%48
 
@@ -242,7 +252,10 @@ while mainLoop and not quit:
 		itemBlitter(item)
 
 	supercoolText('CHADTECH:KNOLLMASTER',(20,20+(8*math.sin(bob/4.))))
-	supercoolText('Time:'+str(timer),(20,93+(8*math.sin(bob/4.))))
+	if ((howLongYouHaveToKnollEverything+5)-(now-beginningOfTime))>0 and (howLongYouHaveToKnollEverything)>(((howLongYouHaveToKnollEverything+5)-(now-beginningOfTime))):
+		supercoolText('Time:'+str((howLongYouHaveToKnollEverything+5)-(now-beginningOfTime)),(20,93+(8*math.sin(bob/4.))))
+	else:
+		supercoolText('Time:0',(20,93+(8*math.sin(bob/4.))))
 	supercoolText("Press Q to quit",((resolutionX-485),20+(8*math.sin(bob/4.))))
 	if scoreTrigger:
 		lineNumber=3
@@ -261,7 +274,6 @@ while mainLoop and not quit:
 		supercoolText('Final Score = '+str(angleAve)[:6]+'%',(20,73*lineNumber+(8*math.sin(bob/4.))))
 		lineNumber+=1
 
-
 		if groupBlink<80:
 			if ((groupBlink/5)%2) == 1:
 				for item in itemsOnSurface:
@@ -271,8 +283,8 @@ while mainLoop and not quit:
 			groupBlink+=1
 	bob+=1
 
-	if not timer<1:
-		timer-=1
+	if (now-beginningOfTime)<(howLongYouHaveToKnollEverything+5):
+		pass
 	else:
 		if not scoreTrigger:
 			angleAve=0
@@ -348,64 +360,65 @@ while mainLoop and not quit:
 				amountCouldFit = numberTall*numberWide
 				excessSizeCou+=(amountCouldFit-numberOfInstances)
 
-
 			angleAve-=excessSizeCou*10
 			angleAve-=outOfBoundCou*25
 			angleAve-=overlapCou*25
 
 			scoreTrigger = True
+	if (now-beginningOfTime)>5:
+		for event in pygame.event.get():
 
+			if event.type == pygame.KEYDOWN:
+				if event.key == pygame.K_q:
+					mainLoop=False
 
+			##### If they click down
+			if event.type==pygame.MOUSEBUTTONDOWN:
+				##### Get mouse position
+				mouX,mouY = event.pos		
+				mouseDown = True
+				itemFound = False
+				##### Run through every item, and see if you clicked within its boundaries
+				for item in itemsOnSurface:
+					if (item.xPos-(item.itemType.xSize/2))<mouX<(item.xPos+(item.itemType.xSize/2)) and (item.yPos-(item.itemType.ySize/2))<mouY<(item.yPos+(item.itemType.ySize/2)):
+						itemFound = True
+						itemSelected=item
+				if not itemFound:
+					itemSelected=''
 
-	for event in pygame.event.get():
+			if event.type==pygame.MOUSEBUTTONUP:
+				mouX,mouY = event.pos
+				mouseDown = False
+				if type(itemSelected)!=str:
+					if leftBou<mouX-(itemSelected.itemType.xSize/2) and mouX+(itemSelected.itemType.xSize/2)<rightBou and topBou<mouY-(itemSelected.itemType.ySize/2) and mouY+(itemSelected.itemType.ySize/2)<botBou:
+						anglin = True
+					else:
+						mouseDown=True
 
-		if event.type == pygame.KEYDOWN:
-			if event.key == pygame.K_q:
+			if event.type == pygame.QUIT:
 				mainLoop=False
+				quit=True
 
-		##### If they click down
-		if event.type==pygame.MOUSEBUTTONDOWN:
-			##### Get mouse position
-			mouX,mouY = event.pos		
-			mouseDown = True
-			itemFound = False
-			##### Run through every item, and see if you clicked within its boundaries
-			for item in itemsOnSurface:
-				if (item.xPos-(item.itemType.xSize/2))<mouX<(item.xPos+(item.itemType.xSize/2)) and (item.yPos-(item.itemType.ySize/2))<mouY<(item.yPos+(item.itemType.ySize/2)):
-					itemFound = True
-					itemSelected=item
-			if not itemFound:
-				itemSelected=''
-
-		if event.type==pygame.MOUSEBUTTONUP:
-			mouX,mouY = event.pos
-			mouseDown = False
+		if mouseDown:
 			if type(itemSelected)!=str:
-				if leftBou<mouX-(itemSelected.itemType.xSize/2) and mouX+(itemSelected.itemType.xSize/2)<rightBou and topBou<mouY-(itemSelected.itemType.ySize/2) and mouY+(itemSelected.itemType.ySize/2)<botBou:
-					anglin = True
-				else:
-					mouseDown=True
+				mouX,mouY = pygame.mouse.get_pos()
+				itemSelected.xPos,itemSelected.yPos = mouX,mouY
 
-		if event.type == pygame.QUIT:
-			mainLoop=False
-			quit=True
-
-	if mouseDown:
-		if type(itemSelected)!=str:
+		if anglin:
 			mouX,mouY = pygame.mouse.get_pos()
-			itemSelected.xPos,itemSelected.yPos = mouX,mouY
+			if type(itemSelected)!=str:
+				relX = mouX-itemSelected.xPos
+				relY = mouY-itemSelected.yPos
+				if relY>0:
+					itemSelected.angle=(math.degrees(math.atan(float(relX)/float(relY))))+180
+				elif 0>relY:
+					itemSelected.angle=(math.degrees(math.atan(float(relX)/float(relY))))
 
-	if anglin:
-		mouX,mouY = pygame.mouse.get_pos()
-		if type(itemSelected)!=str:
-			relX = mouX-itemSelected.xPos
-			relY = mouY-itemSelected.yPos
-			if relY>0:
-				itemSelected.angle=(math.degrees(math.atan(float(relX)/float(relY))))+180
-			elif 0>relY:
-				itemSelected.angle=(math.degrees(math.atan(float(relX)/float(relY))))
+	else:
+		supercoolText(str(6-(now-beginningOfTime)),(resolutionX/2,resolutionY/2),double=True)
 
-	
+
+
 
 	pygame.display.flip()
 	clock.tick(30)
