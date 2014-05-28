@@ -7,5 +7,5 @@ This is just the first iteration of the game. Perhaps I will make further iterat
 Features to add to future versions:
 - Write the game in javascript, so it can be played in browser
 - Make many levels
-- Keep track of time, not by just counting cycles through the main loop
+- ~~Keep track of time, not by just counting cycles through the main loop~~ PUT IT IN v5.01
 - Make a save / open knoll spaces feature ( with a .knoll file type)
