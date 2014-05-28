@@ -12,11 +12,14 @@ pygame.midi.init()
 clock = pygame.time.Clock()
 
 ctCambridge = pygame.font.Font('CtCambridge.ttf',126)
+ctCambridge1 = pygame.font.Font('CtCambridge.ttf',252)
 
 resolutionX, resolutionY = pygame.display.list_modes()[0]
 screen = pygame.display.set_mode((resolutionX,resolutionY),pygame.FULLSCREEN)
 
 pygame.display.set_caption("Chadtech v5.00 : Knollmaster",)
+
+longlines = pygame.image.load('longlines.PNG').convert()
 
 knollTable = pygame.image.load('table.png').convert()
 tableX,tableY = knollTable.get_size()
@@ -87,24 +90,43 @@ def itemBlitter(what):
 	placeeX,placeeY = placee.get_size()
 	screen.blit(placee,[what.xPos-(placeeX/2),what.yPos-(placeeY/2)])
 
-def supercoolText(inputString,where):
+def supercoolText(inputString,where,double=False):
 	whereX,whereY = where
 	global screen
-	screen.blit(ctCambridge.render(inputString,False,(24,13,170)),[whereX+8,whereY])
-	screen.blit(ctCambridge.render(inputString,False,(24,13,170)),[whereX-8,whereY])
-	screen.blit(ctCambridge.render(inputString,False,(24,13,170)),[whereX,whereY+8])
-	screen.blit(ctCambridge.render(inputString,False,(24,13,170)),[whereX,whereY-8])
-	screen.blit(ctCambridge.render(inputString,False,(24,13,170)),[whereX+4,whereY+4])
-	screen.blit(ctCambridge.render(inputString,False,(24,13,170)),[whereX-4,whereY+4])
-	screen.blit(ctCambridge.render(inputString,False,(24,13,170)),[whereX+4,whereY-4])
-	screen.blit(ctCambridge.render(inputString,False,(24,13,170)),[whereX-4,whereY-4])
+	if not double:
+		screen.blit(ctCambridge.render(inputString,False,(24,13,170)),[whereX+8,whereY])
+		screen.blit(ctCambridge.render(inputString,False,(24,13,170)),[whereX-8,whereY])
+		screen.blit(ctCambridge.render(inputString,False,(24,13,170)),[whereX,whereY+8])
+		screen.blit(ctCambridge.render(inputString,False,(24,13,170)),[whereX,whereY-8])
+		screen.blit(ctCambridge.render(inputString,False,(24,13,170)),[whereX+4,whereY+4])
+		screen.blit(ctCambridge.render(inputString,False,(24,13,170)),[whereX-4,whereY+4])
+		screen.blit(ctCambridge.render(inputString,False,(24,13,170)),[whereX+4,whereY-4])
+		screen.blit(ctCambridge.render(inputString,False,(24,13,170)),[whereX-4,whereY-4])
 
-	screen.blit(ctCambridge.render(inputString,False,(63,72,204)),[whereX+4,whereY])
-	screen.blit(ctCambridge.render(inputString,False,(63,72,204)),[whereX-4,whereY])
-	screen.blit(ctCambridge.render(inputString,False,(63,72,204)),[whereX,whereY-4])
-	screen.blit(ctCambridge.render(inputString,False,(63,72,204)),[whereX,whereY+4])
+		screen.blit(ctCambridge.render(inputString,False,(63,72,204)),[whereX+4,whereY])
+		screen.blit(ctCambridge.render(inputString,False,(63,72,204)),[whereX-4,whereY])
+		screen.blit(ctCambridge.render(inputString,False,(63,72,204)),[whereX,whereY-4])
+		screen.blit(ctCambridge.render(inputString,False,(63,72,204)),[whereX,whereY+4])
 
-	screen.blit(ctCambridge.render(inputString,False,(191,240,234)),[whereX,whereY])
+		screen.blit(ctCambridge.render(inputString,False,(191,240,234)),[whereX,whereY])
+
+	else:
+		screen.blit(ctCambridge1.render(inputString,False,(24,13,170)),[whereX+16,whereY])
+		screen.blit(ctCambridge1.render(inputString,False,(24,13,170)),[whereX-16,whereY])
+		screen.blit(ctCambridge1.render(inputString,False,(24,13,170)),[whereX,whereY+16])
+		screen.blit(ctCambridge1.render(inputString,False,(24,13,170)),[whereX,whereY-16])
+		screen.blit(ctCambridge1.render(inputString,False,(24,13,170)),[whereX+8,whereY+8])
+		screen.blit(ctCambridge1.render(inputString,False,(24,13,170)),[whereX-8,whereY+8])
+		screen.blit(ctCambridge1.render(inputString,False,(24,13,170)),[whereX+8,whereY-8])
+		screen.blit(ctCambridge1.render(inputString,False,(24,13,170)),[whereX-8,whereY-8])
+
+		screen.blit(ctCambridge1.render(inputString,False,(63,72,204)),[whereX+8,whereY])
+		screen.blit(ctCambridge1.render(inputString,False,(63,72,204)),[whereX-8,whereY])
+		screen.blit(ctCambridge1.render(inputString,False,(63,72,204)),[whereX,whereY-8])
+		screen.blit(ctCambridge1.render(inputString,False,(63,72,204)),[whereX,whereY+8])
+
+		screen.blit(ctCambridge1.render(inputString,False,(191,240,234)),[whereX,whereY])
+
 
 ##### Check if regions overlap
 ##### Regions are quadtuples where (top boundary, right boundary, bottom boundary, left boundary)
@@ -147,6 +169,7 @@ os.chdir(os.path.dirname(os.getcwd()))
 
 ### While true the game runs
 mainLoop = True
+intro=True
 quit = False
 mouseDown = False
 jusUp=False
@@ -165,7 +188,6 @@ groupBlink = 0
 ################################
 ##### Load items in level ######
 ################################
-
 
 itemsOnSurface.append(itemInstance(itemMapper['drill0'],leftBou+itemMapper['drill0'].xSize,botBou-itemMapper['drill0'].ySize,60))
 
@@ -186,6 +208,25 @@ itemTypeChecker =[]
 
 for item in itemsOnSurface:
 	itemRegions[item.itemType.name]=('','','','')
+
+while intro and not quit:
+
+	screen.fill((73,147,182))
+	lx,ly=longlines.get_size()
+	screen.blit(longlines,[0,resolutionY-ly])
+
+	supercoolText('CHADTECH :',(resolutionX/2-700,resolutionY/2-400),double=True)
+	supercoolText('v4.00 -- KNOLLMASTER',(resolutionX/2-700,resolutionY/2-260),double=True)
+
+	supercoolText('Press Any Key To Start',(resolutionX/2,resolutionY/2))
+
+	for event in pygame.event.get():
+		if event.type == pygame.KEYDOWN:
+			intro=False
+
+	pygame.display.flip()
+	clock.tick(30)
+
 
 while mainLoop and not quit:
 
