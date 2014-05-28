@@ -216,7 +216,7 @@ while intro and not quit:
 	screen.blit(longlines,[0,resolutionY-ly])
 
 	supercoolText('CHADTECH :',(resolutionX/2-700,resolutionY/2-400),double=True)
-	supercoolText('v4.00 -- KNOLLMASTER',(resolutionX/2-700,resolutionY/2-260),double=True)
+	supercoolText('v5.00 -- KNOLLMASTER',(resolutionX/2-700,resolutionY/2-260),double=True)
 
 	supercoolText('Press Any Key To Start',(resolutionX/2,resolutionY/2))
 
