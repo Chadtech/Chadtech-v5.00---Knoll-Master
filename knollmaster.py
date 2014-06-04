@@ -134,24 +134,24 @@ def supercoolText(inputString,where,double=False):
 ##### The function Checks by seeing if two or more of the four boundaries cross each other
 def checkForOverlap(regionOn,regionTw):
 
-		tlIn = False
-		trIn = False
-		brIn = False
-		blIn = False
+	tlIn = False
+	trIn = False
+	brIn = False
+	blIn = False
 
-		tOn,rOn,bOn,lOn = regionOn
-		tTw,rTw,bTw,lTw = regionTw
+	tOn,rOn,bOn,lOn = regionOn
+	tTw,rTw,bTw,lTw = regionTw
 
-		violationCou = 0
+	violationCou = 0
 
-		corners=[
-			(lOn,tOn),
-			(rOn,tOn),
-			(rOn,bOn),
-			(lOn,bOn)
-			]
+	corners=[
+		(lOn,tOn),
+		(rOn,tOn),
+		(rOn,bOn),
+		(lOn,bOn)
+		]
 
-		return not (bTw<tOn or bOn<tTw or rTw<lOn or rOn<lTw)
+	return not (bTw<tOn or bOn<tTw or rTw<lOn or rOn<lTw)
 
 ################################
 ###### Load all the items ######
@@ -164,265 +164,301 @@ for item in os.listdir(os.getcwd()):
 	itemMapper[itemType(item)]=item[:len(item)-4]
 os.chdir(os.path.dirname(os.getcwd()))
 
-################################
-### Declaring some Variables ###
-################################
 
-### While true the game runs
-mainLoop = True
-intro=True
-quit = False
-mouseDown = False
-jusUp=False
-anglin = False
-start=False
+restart=True
+while restart:
 
-carpetScroll = 0
-bob = 0
-itemSelected = ''
-scoreTrigger = False
+	################################
+	### Declaring some Variables ###
+	################################
 
-itemsOnSurface=[]
+	### While true the game runs
+	mainLoop = True
+	intro=True
+	quit = False
+	mouseDown = False
+	jusUp=False
+	anglin = False
+	start=False
 
-timer = 500
-groupBlink = 0 
+	carpetScroll = 0
+	bob = 0
+	itemSelected = ''
+	scoreTrigger = False
 
-howLongYouHaveToKnollEverything = 15
+	itemsOnSurface=[]
 
-################################
-##### Load items in level ######
-################################
+	timer = 500
+	groupBlink = 0 
 
-itemsOnSurface.append(itemInstance(itemMapper['drill0'],leftBou+itemMapper['drill0'].xSize,botBou-itemMapper['drill0'].ySize,60))
+	howLongYouHaveToKnollEverything = 40
+	countDownLength = 3
 
-itemsOnSurface.append(itemInstance(itemMapper['calculator0'],leftBou+itemMapper['calculator0'].xSize+200,botBou-itemMapper['calculator0'].ySize,160))
+	################################
+	##### Load items in level ######
+	################################
 
-itemsOnSurface.append(itemInstance(itemMapper['pokeball0'],itemMapper['pokeball0'].xSize+300+leftBou,topBou+itemMapper['pokeball0'].ySize+27,166))
-itemsOnSurface.append(itemInstance(itemMapper['pokeball0'],itemMapper['pokeball0'].xSize+440+leftBou,topBou+itemMapper['pokeball0'].ySize+127,180))
+	itemsOnSurface.append(itemInstance(itemMapper['drill0'],leftBou+itemMapper['drill0'].xSize,botBou-itemMapper['drill0'].ySize,60))
 
-itemsOnSurface.append(itemInstance(itemMapper['clamp0'],itemMapper['clamp0'].xSize+leftBou+50,topBou+itemMapper['clamp0'].ySize,66))
-itemsOnSurface.append(itemInstance(itemMapper['clamp0'],itemMapper['clamp0'].xSize+leftBou+500,topBou+itemMapper['clamp0'].ySize+200,315))
+	itemsOnSurface.append(itemInstance(itemMapper['calculator0'],leftBou+itemMapper['calculator0'].xSize+200,botBou-itemMapper['calculator0'].ySize,160))
 
-################################
-### Make region for itemtypes ##
-################################
+	itemsOnSurface.append(itemInstance(itemMapper['glasses0'],leftBou+itemMapper['glasses0'].xSize+513,topBou+itemMapper['glasses0'].ySize+114,250))
+	itemsOnSurface.append(itemInstance(itemMapper['glasses0'],leftBou+itemMapper['glasses0'].xSize+436,topBou+itemMapper['glasses0'].ySize+214,134))
 
-itemRegions = {}
-itemTypeChecker =[]
+	itemsOnSurface.append(itemInstance(itemMapper['pokeball0'],itemMapper['pokeball0'].xSize+300+leftBou,topBou+itemMapper['pokeball0'].ySize+27,166))
+	itemsOnSurface.append(itemInstance(itemMapper['pokeball0'],itemMapper['pokeball0'].xSize+440+leftBou,topBou+itemMapper['pokeball0'].ySize+127,180))
+	itemsOnSurface.append(itemInstance(itemMapper['pokeball0'],itemMapper['pokeball0'].xSize+134+leftBou,topBou+itemMapper['pokeball0'].ySize+256,264))
+	itemsOnSurface.append(itemInstance(itemMapper['pokeball0'],itemMapper['pokeball0'].xSize+212+leftBou,topBou+itemMapper['pokeball0'].ySize+224,194))
+	itemsOnSurface.append(itemInstance(itemMapper['pokeball0'],itemMapper['pokeball0'].xSize+302+leftBou,topBou+itemMapper['pokeball0'].ySize+274,159))
 
-for item in itemsOnSurface:
-	itemRegions[item.itemType.name]=('','','','')
+	itemsOnSurface.append(itemInstance(itemMapper['clamp0'],itemMapper['clamp0'].xSize+leftBou+50,topBou+itemMapper['clamp0'].ySize,66))
+	itemsOnSurface.append(itemInstance(itemMapper['clamp0'],itemMapper['clamp0'].xSize+leftBou+500,topBou+itemMapper['clamp0'].ySize+200,315))
+	itemsOnSurface.append(itemInstance(itemMapper['clamp0'],itemMapper['clamp0'].xSize+leftBou+347,topBou+itemMapper['clamp0'].ySize+102,312))
+	itemsOnSurface.append(itemInstance(itemMapper['clamp0'],itemMapper['clamp0'].xSize+leftBou+471,topBou+itemMapper['clamp0'].ySize+59,201))
 
-while intro and not quit:
+	################################
+	### Make region for itemtypes ##
+	################################
 
-	screen.fill((73,147,182))
-	lx,ly=longlines.get_size()
-	screen.blit(longlines,[300,resolutionY-ly])
-
-	supercoolText('CHADTECH :',(20,20),double=True)
-	supercoolText('v5.01 -- KNOLLMASTER',(20,160),double=True)
-
-	supercoolText('Press Any Key To Start',(resolutionX/2,resolutionY/2))
-
-	for event in pygame.event.get():
-		if event.type == pygame.KEYDOWN:
-			intro=False
-
-	pygame.display.flip()
-	clock.tick(30)
-
-now =(time.gmtime()[3]*(3600))+(time.gmtime()[4]*(60))+(time.gmtime()[5])
-beginningOfTime =0
-beginningOfTime+=now 
-
-while mainLoop and not quit:
-
-	now=(time.gmtime()[3]*(3600))+(time.gmtime()[4]*(60))+(time.gmtime()[5])
-
-	for yit in range((resolutionX/carpetX)+1):
-		for vapp in range((resolutionY/carpetY)+2):
-			screen.blit(carpetTile,[(carpetX*yit)+carpetScroll-48,(carpetY*vapp)+carpetScroll-48])
-
-	carpetScroll+=1
-	carpetScroll=carpetScroll%48
-
-	screen.blit(knollTable,((resolutionX-tableX)/2,(resolutionY-tableY)/2))
+	itemRegions = {}
+	itemTypeChecker =[]
 
 	for item in itemsOnSurface:
-		itemBlitter(item)
+		itemRegions[item.itemType.name]=('','','','')
 
-	supercoolText('CHADTECH:KNOLLMASTER',(20,20+(8*math.sin(bob/4.))))
-	if ((howLongYouHaveToKnollEverything+5)-(now-beginningOfTime))>0 and (howLongYouHaveToKnollEverything)>(((howLongYouHaveToKnollEverything+5)-(now-beginningOfTime))):
-		supercoolText('Time:'+str((howLongYouHaveToKnollEverything+5)-(now-beginningOfTime)),(20,93+(8*math.sin(bob/4.))))
-	else:
-		supercoolText('Time:0',(20,93+(8*math.sin(bob/4.))))
-	supercoolText("Press Q to quit",((resolutionX-485),20+(8*math.sin(bob/4.))))
-	if scoreTrigger:
-		lineNumber=3
-		supercoolText('Penalties : ',(20,73*lineNumber+(8*math.sin(bob/4.))))
-		lineNumber+=1
-		supercoolText('Out of Bounds = '+str(outOfBoundCou),(93,73*lineNumber+(8*math.sin(bob/4.))))
-		lineNumber+=1
-		supercoolText('Overlapping = '+str(overlapCou),(93,73*lineNumber+(8*math.sin(bob/4.))))
-		lineNumber+=1
-		supercoolText('Excess size = '+str(excessSizeCou),(93,73*lineNumber+(8*math.sin(bob/4.))))
-		lineNumber+=1
-		supercoolText('Total penalties = -'+str(excessSizeCou+overlapCou+outOfBoundCou)+' x 25%',(93,73*lineNumber+(8*math.sin(bob/4.))))
-		lineNumber+=1
-		supercoolText('                = -'+str(((excessSizeCou)*10)+(overlapCou+outOfBoundCou)*25)+'%',(93,73*lineNumber+(8*math.sin(bob/4.))))
-		lineNumber+=1
-		supercoolText('Final Score = '+str(angleAve)[:6]+'%',(20,73*lineNumber+(8*math.sin(bob/4.))))
-		lineNumber+=1
+	while intro and not quit:
 
-		if groupBlink<80:
-			if ((groupBlink/5)%2) == 1:
-				for item in itemsOnSurface:
-					t,r,b,l = itemRegions[item.itemType.name]
-					pygame.draw.rect(screen, (255,192,192),(l,t,r-l,b-t),4)
-					pygame.draw.rect(screen, (255,0,0),(l,t,r-l,b-t),2)
-			groupBlink+=1
-	bob+=1
+		screen.fill((73,147,182))
+		lx,ly=longlines.get_size()
+		screen.blit(longlines,[300,resolutionY-ly])
 
-	if (now-beginningOfTime)<(howLongYouHaveToKnollEverything+5):
-		pass
-	else:
-		if not scoreTrigger:
-			angleAve=0
-			for item in itemsOnSurface:
-				angleAve+=math.fabs(item.angle)
-			angleAve=float(angleAve)/float(len(itemsOnSurface))
-			angleAve=(180.-angleAve)/180.
-			angleAve=angleAve**(100)
-			angleAve=100.*angleAve
+		supercoolText('CHADTECH :',(20,20),double=True)
+		supercoolText('v5.01 -- KNOLLMASTER',(20,160),double=True)
 
-			##### outOfBoundCou is the penalty of exceeding the knoll zone (the table)
-			outOfBoundCou=0
-			#### overlapCou is the penalty of overlapping item regions
-			overlapCou=0
-			itemZones = []
-			
-			##### Define the boundaries for the region
-			for item in itemsOnSurface:
-				tBou,rBou,bBou,lBou = itemRegions[item.itemType.name]
-				if type(tBou)==str or (type(tBou)==int and (item.yPos-(item.itemType.ySize/2))<tBou):
-					tBou=item.yPos-(item.itemType.ySize/2)
-				if type(rBou)==str or (type(rBou)==int and rBou<(item.xPos+(item.itemType.xSize/2))):
-					rBou=item.xPos+(item.itemType.xSize/2)
-				if type(bBou)==str or (type(bBou)==int and bBou<(item.yPos+(item.itemType.ySize/2))):
-					bBou=item.yPos+(item.itemType.ySize/2)
-				if type(lBou)==str or (type(lBou)==int and (item.xPos-(item.itemType.xSize/2))<lBou):
-					lBou=item.xPos-(item.itemType.xSize/2)
+		supercoolText('Press Any Key To Start',(resolutionX/2,resolutionY/2))
 
-				itemRegions[item.itemType.name]=(tBou,rBou,bBou,lBou)
-
-			##### See if the region exceeds the boundaries of the table
-			for region in itemRegions:
-				tBou,rBou,bBou,lBou = itemRegions[region]
-				if tBou<topBou:
-					outOfBoundCou+=1
-				if botBou<bBou:
-					outOfBoundCou+=1
-				if rightBou<rBou:
-					outOfBoundCou+=1
-				if lBou<leftBou:
-					outOfBoundCou+=1
-
-			##### For every item region on the table, see if it overlaps with the other regions
-			overlapCou=0
-			setOfItemTypes =set([])
-			for item in itemsOnSurface:
-				setOfItemTypes.add(item.itemType.name)
-			print setOfItemTypes
-			for itemType in setOfItemTypes:
-				for anotherItemType in setOfItemTypes:
-					if itemType!=anotherItemType:
-						if checkForOverlap(itemRegions[itemType],itemRegions[anotherItemType]):
-							overlapCou+=1
-			#### The code double counts every over lap, so I divide it by 2 (region a and b overlapping is a single over lap, but when counting, the code counts a overlapping b, and b overlapping a as distinct)
-			overlapCou=overlapCou/2
-
-			##### For every item region on the table, see if its excessively large
-			excessSizeCou=0
-			setOfItemTypes =set([])
-			for item in itemsOnSurface:
-				setOfItemTypes.add(item.itemType.name)
-			for itemType in setOfItemTypes:
-				tSide,rSide,bSide,lSide = itemRegions[itemType]
-				regionWidth,regionHeight = rSide-lSide,bSide-tSide
-				halfItsPerimeter=regionWidth+regionHeight
-				numberOfInstances=0
-				for item in itemsOnSurface:
-					if item.itemType.name==itemType:
-						numberOfInstances+=1
-
-				numberTall=(regionHeight/itemMapper[itemType].ySize)
-				numberWide=(regionWidth/itemMapper[itemType].xSize)
-				amountCouldFit = numberTall*numberWide
-				excessSizeCou+=(amountCouldFit-numberOfInstances)
-
-			angleAve-=excessSizeCou*10
-			angleAve-=outOfBoundCou*25
-			angleAve-=overlapCou*25
-
-			scoreTrigger = True
-	if (now-beginningOfTime)>=5:
 		for event in pygame.event.get():
-
 			if event.type == pygame.KEYDOWN:
-				if event.key == pygame.K_q:
-					mainLoop=False
+				intro=False
 
-			##### If they click down
-			if event.type==pygame.MOUSEBUTTONDOWN:
-				##### Get mouse position
-				mouX,mouY = event.pos		
-				mouseDown = True
-				itemFound = False
-				##### Run through every item, and see if you clicked within its boundaries
+		pygame.display.flip()
+		clock.tick(30)
+
+	now =(time.gmtime()[3]*(3600))+(time.gmtime()[4]*(60))+(time.gmtime()[5])
+	beginningOfTime =0
+	beginningOfTime+=now 
+
+	while mainLoop and not quit:
+
+		now=(time.gmtime()[3]*(3600))+(time.gmtime()[4]*(60))+(time.gmtime()[5])
+
+		for yit in range((resolutionX/carpetX)+1):
+			for vapp in range((resolutionY/carpetY)+2):
+				screen.blit(carpetTile,[(carpetX*yit)+carpetScroll-48,(carpetY*vapp)+carpetScroll-48])
+
+		carpetScroll+=1
+		carpetScroll=carpetScroll%48
+
+		screen.blit(knollTable,((resolutionX-tableX)/2,(resolutionY-tableY)/2))
+
+		for item in itemsOnSurface:
+			itemBlitter(item)
+
+		supercoolText('CHADTECH:KNOLLMASTER',(20,20+(8*math.sin(bob/4.))))
+		if ((howLongYouHaveToKnollEverything+5)-(now-beginningOfTime))>0 and (howLongYouHaveToKnollEverything)>(((howLongYouHaveToKnollEverything+5)-(now-beginningOfTime))):
+			supercoolText('Time:'+str((howLongYouHaveToKnollEverything+5)-(now-beginningOfTime)),(20,93+(8*math.sin(bob/4.))))
+		else:
+			supercoolText('Time:0',(20,93+(8*math.sin(bob/4.))))
+		supercoolText("Press Q to quit",((resolutionX-585),20+(8*math.sin(bob/4.))))
+		supercoolText("Press R to restart",((resolutionX-585),93+(8*math.sin(bob/4.))))
+		if scoreTrigger:
+			lineNumber=3
+			supercoolText('Penalties : ',(20,73*lineNumber+(8*math.sin(bob/4.))))
+			lineNumber+=1
+			supercoolText('Out of Bounds     ',(93,73*lineNumber+(8*math.sin(bob/4.))))
+			supercoolText('= '+str(outOfBoundCou),(750,73*lineNumber+(8*math.sin(bob/4.))))
+			lineNumber+=1
+			supercoolText('Overlapping Groups',(93,73*lineNumber+(8*math.sin(bob/4.))))
+			supercoolText('= '+str(overlapCou),(750,73*lineNumber+(8*math.sin(bob/4.))))			
+			lineNumber+=1
+			supercoolText('Excess Group Size',(93,73*lineNumber+(8*math.sin(bob/4.))))
+			supercoolText('= '+str(excessSizeCou),(750,73*lineNumber+(8*math.sin(bob/4.))))
+			lineNumber+=1
+			supercoolText('Total Penalties',(93,73*lineNumber+(8*math.sin(bob/4.))))
+			supercoolText('= -'+str(excessSizeCou+overlapCou+outOfBoundCou)+' x 25%',(750,73*lineNumber+(8*math.sin(bob/4.))))
+			lineNumber+=1
+			supercoolText('= -'+str(((excessSizeCou)*10)+(overlapCou+outOfBoundCou)*25)+'%',(750,73*lineNumber+(8*math.sin(bob/4.))))
+			lineNumber+=1
+			supercoolText('Final Score'+str(angleAve)[:6]+'%',(20,73*lineNumber+(8*math.sin(bob/4.))))
+			supercoolText('= '+str(angleAve)[:6]+'%',(750,73*lineNumber+(8*math.sin(bob/4.))))
+			lineNumber+=1
+
+			if groupBlink<80:
+				if ((groupBlink/5)%2) == 1:
+					for item in itemsOnSurface:
+						t,r,b,l = itemRegions[item.itemType.name]
+						pygame.draw.rect(screen, (255,192,192),(l,t,r-l,b-t),4)
+						pygame.draw.rect(screen, (255,0,0),(l,t,r-l,b-t),2)
+				groupBlink+=1
+		bob+=1
+
+		if (now-beginningOfTime)<(howLongYouHaveToKnollEverything+countDownLength):
+			pass
+		else:
+			if not scoreTrigger:
+				angleAve=0
 				for item in itemsOnSurface:
-					if (item.xPos-(item.itemType.xSize/2))<mouX<(item.xPos+(item.itemType.xSize/2)) and (item.yPos-(item.itemType.ySize/2))<mouY<(item.yPos+(item.itemType.ySize/2)):
-						itemFound = True
-						itemSelected=item
-				if not itemFound:
-					itemSelected=''
+					angleAve+=math.fabs(item.angle)
+				angleAve=float(angleAve)/float(len(itemsOnSurface))
+				angleAve=(180.-angleAve)/180.
+				angleAve=angleAve**(100)
+				angleAve=100.*angleAve
 
-			if event.type==pygame.MOUSEBUTTONUP:
-				mouX,mouY = event.pos
-				mouseDown = False
+				##### outOfBoundCou is the penalty of exceeding the knoll zone (the table)
+				outOfBoundCou=0
+				#### overlapCou is the penalty of overlapping item regions
+				overlapCou=0
+				itemZones = []
+				
+				##### Define the boundaries for the region
+				for item in itemsOnSurface:
+					tBou,rBou,bBou,lBou = itemRegions[item.itemType.name]
+					if type(tBou)==str or (type(tBou)==int and (item.yPos-(item.itemType.ySize/2))<tBou):
+						tBou=item.yPos-(item.itemType.ySize/2)
+					if type(rBou)==str or (type(rBou)==int and rBou<(item.xPos+(item.itemType.xSize/2))):
+						rBou=item.xPos+(item.itemType.xSize/2)
+					if type(bBou)==str or (type(bBou)==int and bBou<(item.yPos+(item.itemType.ySize/2))):
+						bBou=item.yPos+(item.itemType.ySize/2)
+					if type(lBou)==str or (type(lBou)==int and (item.xPos-(item.itemType.xSize/2))<lBou):
+						lBou=item.xPos-(item.itemType.xSize/2)
+
+					itemRegions[item.itemType.name]=(tBou,rBou,bBou,lBou)
+
+				##### See if the region exceeds the boundaries of the table
+				for region in itemRegions:
+					tBou,rBou,bBou,lBou = itemRegions[region]
+					if tBou<topBou:
+						outOfBoundCou+=1
+					if botBou<bBou:
+						outOfBoundCou+=1
+					if rightBou<rBou:
+						outOfBoundCou+=1
+					if lBou<leftBou:
+						outOfBoundCou+=1
+
+				##### For every item region on the table, see if it overlaps with the other regions
+				overlapCou=0
+				setOfItemTypes =set([])
+				for item in itemsOnSurface:
+					setOfItemTypes.add(item.itemType.name)
+				print setOfItemTypes
+				for itemType in setOfItemTypes:
+					for anotherItemType in setOfItemTypes:
+						if itemType!=anotherItemType:
+							if checkForOverlap(itemRegions[itemType],itemRegions[anotherItemType]):
+								overlapCou+=1
+				#### The code double counts every over lap, so I divide it by 2 (region a and b overlapping is a single over lap, but when counting, the code counts a overlapping b, and b overlapping a as distinct)
+				overlapCou=overlapCou/2
+
+				##### For every item region on the table, see if its excessively large
+				excessSizeCou=0
+				setOfItemTypes =set([])
+				for item in itemsOnSurface:
+					setOfItemTypes.add(item.itemType.name)
+				for itemType in setOfItemTypes:
+					tSide,rSide,bSide,lSide = itemRegions[itemType]
+					regionWidth,regionHeight = rSide-lSide,bSide-tSide
+					halfItsPerimeter=regionWidth+regionHeight
+					numberOfInstances=0
+					for item in itemsOnSurface:
+						if item.itemType.name==itemType:
+							numberOfInstances+=1
+
+					numberTall=(regionHeight/itemMapper[itemType].ySize)
+					numberWide=(regionWidth/itemMapper[itemType].xSize)
+					amountCouldFit = numberTall*numberWide
+					if ((amountCouldFit-numberOfInstances)>1):
+						excessSizeCou+=(amountCouldFit-numberOfInstances)
+
+				angleAve-=excessSizeCou*10
+				angleAve-=outOfBoundCou*25
+				angleAve-=overlapCou*25
+
+				scoreTrigger = True
+		if (now-beginningOfTime)>=countDownLength:
+			for event in pygame.event.get():
+
+				if event.type == pygame.KEYDOWN:
+					if event.key == pygame.K_q:
+						mainLoop=False
+						restart=False
+					if event.key == pygame.K_r:
+						mainLoop=False
+
+				##### If they click down
+				if event.type==pygame.MOUSEBUTTONDOWN:
+					##### Get mouse position
+					mouX,mouY = event.pos		
+					mouseDown = True
+					itemFound = False
+					##### Run through every item, and see if you clicked within its boundaries
+					for item in itemsOnSurface:
+						if (item.xPos-(item.itemType.xSize/2))<mouX<(item.xPos+(item.itemType.xSize/2)) and (item.yPos-(item.itemType.ySize/2))<mouY<(item.yPos+(item.itemType.ySize/2)):
+							itemFound = True
+							itemSelected=item
+					if not itemFound:
+						itemSelected=''
+
+				if event.type==pygame.MOUSEBUTTONUP:
+					mouX,mouY = event.pos
+					mouseDown = False
+					if type(itemSelected)!=str:
+						if leftBou<mouX-(itemSelected.itemType.xSize/2) and mouX+(itemSelected.itemType.xSize/2)<rightBou and topBou<mouY-(itemSelected.itemType.ySize/2) and mouY+(itemSelected.itemType.ySize/2)<botBou:
+							anglin = True
+						else:
+							mouseDown=True
+
+				if event.type == pygame.QUIT:
+					mainLoop=False
+					quit=True
+
+			if mouseDown:
 				if type(itemSelected)!=str:
-					if leftBou<mouX-(itemSelected.itemType.xSize/2) and mouX+(itemSelected.itemType.xSize/2)<rightBou and topBou<mouY-(itemSelected.itemType.ySize/2) and mouY+(itemSelected.itemType.ySize/2)<botBou:
-						anglin = True
-					else:
-						mouseDown=True
+					mouX,mouY = pygame.mouse.get_pos()
+					itemSelected.xPos,itemSelected.yPos = mouX,mouY
 
-			if event.type == pygame.QUIT:
-				mainLoop=False
-				quit=True
-
-		if mouseDown:
-			if type(itemSelected)!=str:
+			if anglin:
 				mouX,mouY = pygame.mouse.get_pos()
-				itemSelected.xPos,itemSelected.yPos = mouX,mouY
+				if type(itemSelected)!=str:
+					relX = mouX-itemSelected.xPos
+					relY = mouY-itemSelected.yPos
+					if relY>0:
+						itemSelected.angle=(math.degrees(math.atan(float(relX)/float(relY))))+180
+					elif 0>relY:
+						itemSelected.angle=(math.degrees(math.atan(float(relX)/float(relY))))
 
-		if anglin:
-			mouX,mouY = pygame.mouse.get_pos()
-			if type(itemSelected)!=str:
-				relX = mouX-itemSelected.xPos
-				relY = mouY-itemSelected.yPos
-				if relY>0:
-					itemSelected.angle=(math.degrees(math.atan(float(relX)/float(relY))))+180
-				elif 0>relY:
-					itemSelected.angle=(math.degrees(math.atan(float(relX)/float(relY))))
+		else:
+			supercoolText(str(countDownLength-(now-beginningOfTime)),(resolutionX/2,resolutionY/2),double=True)
+			for event in pygame.event.get():
 
-	else:
-		supercoolText(str(5-(now-beginningOfTime)),(resolutionX/2,resolutionY/2),double=True)
+					if event.type == pygame.KEYDOWN:
+						if event.key == pygame.K_q:
+							mainLoop=False
+							restart=False
+						if event.key == pygame.K_r:
+							mainLoop=False
+
+					##### If they click down
+					if event.type==pygame.MOUSEBUTTONDOWN:
+						pass
+					if event.type==pygame.MOUSEBUTTONUP:
+						pass
 
 
 
+		pygame.display.flip()
+		clock.tick(30)
 
-	pygame.display.flip()
-	clock.tick(30)
-
-	screen.fill((0,0,0))
+		screen.fill((0,0,0))
 
 pygame.quit()
