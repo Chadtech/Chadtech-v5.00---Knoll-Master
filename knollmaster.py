@@ -351,7 +351,6 @@ while restart:
 				setOfItemTypes =set([])
 				for item in itemsOnSurface:
 					setOfItemTypes.add(item.itemType.name)
-				print setOfItemTypes
 				for itemType in setOfItemTypes:
 					for anotherItemType in setOfItemTypes:
 						if itemType!=anotherItemType:
