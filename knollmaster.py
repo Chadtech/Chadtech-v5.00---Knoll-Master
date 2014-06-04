@@ -18,9 +18,11 @@ ctCambridge1 = pygame.font.Font('CtCambridge.ttf',252)
 resolutionX, resolutionY = pygame.display.list_modes()[0]
 screen = pygame.display.set_mode((resolutionX,resolutionY),pygame.FULLSCREEN)
 
-pygame.display.set_caption("Chadtech v5.01 : Knollmaster",)
+pygame.display.set_caption("Chadtech v5.02 : Knollmaster",)
 
 longlines = pygame.image.load('longlines.PNG').convert()
+definition = pygame.image.load('rules.PNG').convert()
+definition.set_colorkey((73,147,182),255)
 
 knollTable = pygame.image.load('table.png').convert()
 tableX,tableY = knollTable.get_size()
@@ -230,12 +232,13 @@ while restart:
 
 		screen.fill((73,147,182))
 		lx,ly=longlines.get_size()
-		screen.blit(longlines,[300,resolutionY-ly])
+		screen.blit(longlines,[0,resolutionY-ly])
+		screen.blit(definition,[334,resolutionY-600])
 
 		supercoolText('CHADTECH :',(20,20),double=True)
-		supercoolText('v5.01 -- KNOLLMASTER',(20,160),double=True)
+		supercoolText('v5.02 -- KNOLLMASTER',(20,160),double=True)
 
-		supercoolText('Press Any Key To Start',(resolutionX/2,resolutionY/2))
+		supercoolText('Press Any Key To Start',(resolutionX/2,(resolutionY/2)-250))
 
 		for event in pygame.event.get():
 			if event.type == pygame.KEYDOWN:
@@ -275,7 +278,7 @@ while restart:
 			lineNumber=3
 			supercoolText('Penalties : ',(20,73*lineNumber+(8*math.sin(bob/4.))))
 			lineNumber+=1
-			supercoolText('Out of Bounds     ',(93,73*lineNumber+(8*math.sin(bob/4.))))
+			supercoolText('Out of Bounds    ',(93,73*lineNumber+(8*math.sin(bob/4.))))
 			supercoolText('= '+str(outOfBoundCou),(750,73*lineNumber+(8*math.sin(bob/4.))))
 			lineNumber+=1
 			supercoolText('Overlapping Groups',(93,73*lineNumber+(8*math.sin(bob/4.))))
@@ -439,15 +442,13 @@ while restart:
 		else:
 			supercoolText(str(countDownLength-(now-beginningOfTime)),(resolutionX/2,resolutionY/2),double=True)
 			for event in pygame.event.get():
-
 					if event.type == pygame.KEYDOWN:
 						if event.key == pygame.K_q:
 							mainLoop=False
 							restart=False
 						if event.key == pygame.K_r:
 							mainLoop=False
-
-					##### If they click down
+					##### This is necessary. Without it windows will consider python unresponsive
 					if event.type==pygame.MOUSEBUTTONDOWN:
 						pass
 					if event.type==pygame.MOUSEBUTTONUP:
