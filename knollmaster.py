@@ -238,6 +238,7 @@ while restart:
 		supercoolText('CHADTECH :',(20,20),double=True)
 		supercoolText('v5.02 -- KNOLLMASTER',(20,160),double=True)
 
+		supercoolText('By Moheeb Zara',(20,(resolutionY/2)-250))
 		supercoolText('Press Any Key To Start',(resolutionX/2,(resolutionY/2)-250))
 
 		for event in pygame.event.get():
