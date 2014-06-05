@@ -268,8 +268,8 @@ while restart:
 			itemBlitter(item)
 
 		supercoolText('CHADTECH:KNOLLMASTER',(20,20+(8*math.sin(bob/4.))))
-		if ((howLongYouHaveToKnollEverything+5)-(now-beginningOfTime))>0 and (howLongYouHaveToKnollEverything)>(((howLongYouHaveToKnollEverything+5)-(now-beginningOfTime))):
-			supercoolText('Time:'+str((howLongYouHaveToKnollEverything+5)-(now-beginningOfTime)),(20,93+(8*math.sin(bob/4.))))
+		if ((howLongYouHaveToKnollEverything+countDownLength)-(now-beginningOfTime))>0 and (howLongYouHaveToKnollEverything)>(((howLongYouHaveToKnollEverything+countDownLength)-(now-beginningOfTime))):
+			supercoolText('Time:'+str((howLongYouHaveToKnollEverything+countDownLength)-(now-beginningOfTime)),(20,93+(8*math.sin(bob/4.))))
 		else:
 			supercoolText('Time:0',(20,93+(8*math.sin(bob/4.))))
 		supercoolText("Press Q to quit",((resolutionX-585),20+(8*math.sin(bob/4.))))
