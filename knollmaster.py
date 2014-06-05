@@ -279,21 +279,27 @@ while restart:
 			supercoolText('Penalties : ',(20,73*lineNumber+(8*math.sin(bob/4.))))
 			lineNumber+=1
 			supercoolText('Out of Bounds    ',(93,73*lineNumber+(8*math.sin(bob/4.))))
-			supercoolText('= '+str(outOfBoundCou),(750,73*lineNumber+(8*math.sin(bob/4.))))
+			supercoolText('=   ',(750,73*lineNumber+(8*math.sin(bob/4.))))
+			supercoolText(str(outOfBoundCou),(850,73*lineNumber+(8*math.sin(bob/4.))))
 			lineNumber+=1
 			supercoolText('Overlapping Groups',(93,73*lineNumber+(8*math.sin(bob/4.))))
-			supercoolText('= '+str(overlapCou),(750,73*lineNumber+(8*math.sin(bob/4.))))			
+			supercoolText('=   ',(750,73*lineNumber+(8*math.sin(bob/4.))))	
+			supercoolText(str(overlapCou),(850,73*lineNumber+(8*math.sin(bob/4.))))			
 			lineNumber+=1
 			supercoolText('Excess Group Size',(93,73*lineNumber+(8*math.sin(bob/4.))))
-			supercoolText('= '+str(excessSizeCou),(750,73*lineNumber+(8*math.sin(bob/4.))))
+			supercoolText('=  ',(750,73*lineNumber+(8*math.sin(bob/4.))))
+			supercoolText(str(-1*excessSizeCou),(850,73*lineNumber+(8*math.sin(bob/4.))))
 			lineNumber+=1
 			supercoolText('Total Penalties',(93,73*lineNumber+(8*math.sin(bob/4.))))
-			supercoolText('= -'+str(excessSizeCou+overlapCou+outOfBoundCou)+' x 25%',(750,73*lineNumber+(8*math.sin(bob/4.))))
+			supercoolText('= -',(750,73*lineNumber+(8*math.sin(bob/4.))))
+			supercoolText(str(excessSizeCou+overlapCou+outOfBoundCou)+' x 25%',(850,73*lineNumber+(8*math.sin(bob/4.))))
 			lineNumber+=1
-			supercoolText('= -'+str(((excessSizeCou)*10)+(overlapCou+outOfBoundCou)*25)+'%',(750,73*lineNumber+(8*math.sin(bob/4.))))
+			supercoolText('= -',(750,73*lineNumber+(8*math.sin(bob/4.))))
+			supercoolText(str(((excessSizeCou)*10)+(overlapCou+outOfBoundCou)*25)+'%',(850,73*lineNumber+(8*math.sin(bob/4.))))
 			lineNumber+=1
-			supercoolText('Final Score'+str(angleAve)[:6]+'%',(20,73*lineNumber+(8*math.sin(bob/4.))))
-			supercoolText('= '+str(angleAve)[:6]+'%',(750,73*lineNumber+(8*math.sin(bob/4.))))
+			supercoolText('Final Score',(20,73*lineNumber+(8*math.sin(bob/4.))))
+			supercoolText('=  ',(750,73*lineNumber+(8*math.sin(bob/4.))))
+			supercoolText(str(angleAve)[:6]+'%',(850,73*lineNumber+(8*math.sin(bob/4.))))
 			lineNumber+=1
 
 			if groupBlink<80:
