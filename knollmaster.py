@@ -30,7 +30,7 @@ tableX,tableY = tableX*2,tableY*2
 knollTable = pygame.transform.scale(knollTable,(tableX,tableY))
 knollTable.set_colorkey((255,255,255,255))
 
-carpetTile = pygame.image.load('carpettile0.PNG').convert()
+carpetTile = pygame.image.load('carpettile1.PNG').convert()
 carpetX, carpetY = carpetTile.get_size()
 
 class knollZone:
@@ -130,10 +130,10 @@ def supercoolText(inputString,where,double=False):
 
 		screen.blit(ctCambridge1.render(inputString,False,(191,240,234)),[whereX,whereY])
 
-
 ##### Check if regions overlap
 ##### Regions are quadtuples where (top boundary, right boundary, bottom boundary, left boundary)
 ##### The function Checks by seeing if two or more of the four boundaries cross each other
+
 def checkForOverlap(regionOn,regionTw):
 
 	tlIn = False
